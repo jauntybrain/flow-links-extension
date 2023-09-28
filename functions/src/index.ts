@@ -46,6 +46,7 @@ exports.initialize = functions.tasks.taskQueue()
       const versionID = await hostingService.createNewVersion(siteID, configPayload);
 
       // Specify files for upload
+      // Ex: cat index.html.gz | openssl dgst -sha256
       const files = [
         {
           "name": "/index.html",
