@@ -1,4 +1,4 @@
-# Detect Objects with Cloud Vision AI
+# FlowLinks - Dynamic Links Replacement
 
 <img width="150" alt="extension icon" src="./icon.png"/>
 
