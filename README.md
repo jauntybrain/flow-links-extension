@@ -4,7 +4,7 @@
 
 **Author**: Jaunty Brain (**[https://jauntybrain.com/](https://jauntybrain.com/)**)
 
-**Description**: FlowLinks is a replacement for retiring Dynamic Links.
+**Description**: FlowLinks is a replacement for the retiring Dynamic Links.
 
 **Details**: This extension is currently under development. Only basic functionality is available.
 
