@@ -1,13 +1,14 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://github.com/jauntybrain/flow-links-extension/assets/105740958/0c0e7bd0-394c-45d2-b11d-fc77795800ad">
-    <source media="(prefers-color-scheme: light)" srcset="https://github.com/jauntybrain/flow-links-extension/assets/105740958/0c0e7bd0-394c-45d2-b11d-fc77795800ad">
+    <img width="400px">
   </picture>
   <picture>
     <source media="(prefers-color-scheme: light)" srcset="https://github.com/jauntybrain/flow-links-extension/assets/105740958/6a357831-3b08-45f7-9269-54718257f9c6">
-    <img width="400px" src="https://github.com/jauntybrain/flow-links-extension/assets/105740958/6a357831-3b08-45f7-9269-54718257f9c6">
+    <img width="400px"">
   </picture>
 </p>
+
 
 # FlowLinks - Dynamic Links Replacement
 
