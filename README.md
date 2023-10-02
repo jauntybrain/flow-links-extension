@@ -16,7 +16,7 @@
 
 **Install**: Follow [this link](https://console.firebase.google.com/project/_/extensions/install?ref=jauntybrain/flow-links).
 
-**Description**: A powerful replacement for the Dynamic Links service that provides similar functionality.
+**Description**: Let your deep links flow with Flow Links: a powerful alternative to retiring Dynamic Links, featuring a dedicated auto-generated Firebase Hosting website and easy Cloud Firestore integration.
 
 
 ---
