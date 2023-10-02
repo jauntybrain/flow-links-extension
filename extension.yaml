@@ -8,14 +8,17 @@ author:
   authorName: JauntyBrain
   url: https://github.com/jauntybrain/
 
-description: >-
-  A powerful alternative to Dynamic Links.
+description: A powerful alternative to Dynamic Links.
 
 icon: icon.png
 
 license: Apache-2.0
 
-tags: [marketing, utilities]
+tags:
+  [
+    marketing,
+    utilities,
+  ]
 
 sourceUrl: https://github.com/jauntybrain/flow-links-extension/tree/main
 releaseNotesUrl: https://github.com/jauntybrain/flow-links-extension/tree/main/CHANGELOG.md
@@ -40,16 +43,18 @@ resources:
     description: >-
       Initializes the extension. Creates a new Hosting website that will handle Flow Links.
     properties:
-      location: ${LOCATION}
+      location: ${param:LOCATION}
       taskQueueTrigger: {}
+      runtime: 'nodejs16'
+
   - name: api
     type: firebaseextensions.v1beta.function
     description: >-
       Express server that handles all Flow Links.
     properties:
-      location: ${LOCATION}
+      location: ${param:LOCATION}
       httpsTrigger: {}
-      runtime: "nodejs18"
+      runtime: 'nodejs16'
 
 lifecycleEvents:
   onInstall:
