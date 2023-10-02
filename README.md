@@ -1,10 +1,10 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/jauntybrain/flow-links-extension/assets/105740958/0c0e7bd0-394c-45d2-b11d-fc77795800ad">
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/jauntybrain/flow-links-extension/assets/105740958/7a8359a7-5727-4ece-b4ef-c8ad23109271">
     <img width="400px">
   </picture>
   <picture>
-    <source media="(prefers-color-scheme: light)" srcset="https://github.com/jauntybrain/flow-links-extension/assets/105740958/6a357831-3b08-45f7-9269-54718257f9c6">
+    <source media="(prefers-color-scheme: light)" srcset="https://github.com/jauntybrain/flow-links-extension/assets/105740958/e23206fa-ad97-4d75-8096-c3f92126b642">
     <img width="400px"">
   </picture>
 </p>
