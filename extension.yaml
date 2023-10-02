@@ -9,8 +9,7 @@ author:
   url: https://github.com/jauntybrain/
 
 description: >-
-  Let your deep links flow with Flow Links: a powerful alternative to retiring Dynamic Links, 
-  featuring a dedicated auto-generated Firebase Hosting website and easy Cloud Firestore integration.
+  A powerful alternative to Dynamic Links.
 
 icon: icon.png
 
@@ -18,7 +17,8 @@ license: Apache-2.0
 
 tags: [marketing, utilities]
 
-sourceUrl: https://github.com/jauntybrain/flow-links-extension
+sourceUrl: https://github.com/jauntybrain/flow-links-extension/tree/main
+releaseNotesUrl: https://github.com/jauntybrain/flow-links-extension/tree/main/CHANGELOG.md
 
 billingRequired: true
 
