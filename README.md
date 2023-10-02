@@ -1,3 +1,7 @@
+<p align="center">
+  <img width="500px" src="https://github.com/jauntybrain/flow-links-extension/assets/105740958/b67f6cd5-e622-4eb4-af5e-6274aa0a061f"/>
+</p>
+
 # FlowLinks - Dynamic Links Replacement
 
 **Author**: JauntyBrain ([https://www.jauntybrain.com](https://www.jauntybrain.com))
