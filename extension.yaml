@@ -1,12 +1,8 @@
-# Learn detailed information about the fields of an extension.yaml file in the docs:
-# https://firebase.google.com/docs/extensions/reference/extension-yaml
+name: flow-links
+version: 0.0.1
+specVersion: v1beta
 
-name: flow-links # Identifier for your extension
-version: 0.0.1 # Follow semver versioning
-specVersion: v1beta # Version of the Firebase Extensions specification
-
-# Friendly display name for your extension (~3-5 words)
-displayName: Flow Links
+displayName: FlowLinks - Dynamic Links Replacement
 
 # Brief description of the task your extension performs (~1 sentence)
 description: >-
@@ -14,46 +10,34 @@ description: >-
 
 icon: icon.png
 
-license: Apache-2.0 # https://spdx.org/licenses/
+license: Apache-2.0
 
-# Public URL for the source code of your extension
 sourceUrl: https://github.com/jauntybrain/flow-links-extension
 
-# Specify whether a paid-tier billing plan is required to use your extension.
-# Learn more in the docs: https://firebase.google.com/docs/extensions/reference/extension-yaml#billing-required-field
 billingRequired: true
 
-# In an `apis` field, list any Google APIs (like Cloud Translation, BigQuery, etc.)
-# required for your extension to operate.
-# Learn more in the docs:
-# https://firebase.google.com/docs/extensions/reference/extension-yaml#apis-field
 apis:
   - apiName: firebasehosting.googleapis.com
     reason: Hosting API is required to push link accreditations
 
-# In a `roles` field, list any IAM access roles required for your extension to operate.
-# Learn more in the docs:
-# https://firebase.google.com/docs/extensions/reference/extension-yaml#roles-field
 roles:
   - role: firebasehosting.admin
     reason: Required to support custom domain as past of the flow links accreditation with Apple/Google
+  - role: datastore.user
+    reason: Allows the extension to create the links config in Firestore
 
-# In the `resources` field, list each of your extension's functions, including the trigger for each function.
-# Learn more in the docs:
-# https://firebase.google.com/docs/extensions/reference/extension-yaml#resources-field
 resources:
   - name: initialize
     type: firebaseextensions.v1beta.function
     description: >-
-      Describe the task performed when the function is triggered by a lifecycle
-      event
+      Initializes the extension. Creates a new Hosting website that will handle Flow Links.
     properties:
       location: ${LOCATION}
       taskQueueTrigger: {}
   - name: api
     type: firebaseextensions.v1beta.function
     description: >-
-      HTTP request-triggered main app function
+      Express server that handles all Flow Links.
     properties:
       location: ${LOCATION}
       httpsTrigger: {}
@@ -62,17 +46,8 @@ resources:
 lifecycleEvents:
   onInstall:
     function: initialize
-    processingMessage: Intitializing the extension
-  # onUpdate:
-  #   function: myOtherTaskFunction
-  #   processingMessage: Setting up your extension
-  # onConfigure:
-  #   function: myOtherTaskFunction
-  #   processingMessage: Setting up your extension
+    processingMessage: Intitializing the extension... This will take a minute.
 
-# In the `params` field, set up your extension's user-configured parameters.
-# Learn more in the docs:
-# https://firebase.google.com/docs/extensions/reference/extension-yaml#params-field
 params:
   - param: LOCATION
     label: Cloud Functions location
@@ -128,47 +103,45 @@ params:
   - param: IOS_BUNDLE_ID
     label: Bundle ID of your iOS application
     description: >
-      The Cloud Storage bucket where images that are to be processed are located.
-      API requests with input urls or paths that are not inside this bucket will be
-      dropped.
+      You can find your iOS app **Bundle ID** [here](https://console.firebase.google.com/project/${PROJECT_ID}/settings/general/).
+      It is also possible (but not recommended) to add an application that is not linked to this Firebase project.
     type: string
     example: com.example.myawesomeapp
-    validationRegex: ^([0-9a-z_.-]*)$
-    validationErrorMessage: Invalid bundle ID
+    validationRegex: ^([0-9a-zA-Z_.-]*)$
+    validationErrorMessage: Invalid bundle ID format.
     required: true
 
   - param: IOS_TEAM_ID
     label: Team ID of your iOS application
     description: >
-      The Cloud Storage bucket where images that are to be processed are located.
-      API requests with input urls or paths that are not inside this bucket will be
-      dropped.
+      You can find your iOS app **Team ID** [here](https://console.firebase.google.com/project/${PROJECT_ID}/settings/general/).
+      (Project settings (cog icon) -> General -> Your apps -> Apple apps)
+      It is also possible (but not recommended) to add an application that is not linked to this Firebase project.
     type: string
     example: 12ABCD57D3
     validationRegex: ^([0-9A-Z]*)$
-    validationErrorMessage: Invalid team ID
+    validationErrorMessage: Invalid team ID format.
     required: true
 
   - param: ANDROID_BUNDLE_ID
     label: Bundle ID of your Android application
     description: >
-      The Cloud Storage bucket where images that are to be processed are located.
-      API requests with input urls or paths that are not inside this bucket will be
-      dropped.
+      You can find your Android app **Bundle ID** [here](https://console.firebase.google.com/project/${PROJECT_ID}/settings/general/)
+      It is also possible (but not recommended) to add an application that is not linked to this Firebase project.
     type: string
     example: com.example.myawesomeapp
-    validationRegex: ^([0-9a-z_.-]*)$
-    validationErrorMessage: Invalid bundle ID
+    validationRegex: ^([0-9a-zA-Z_.-]*)$
+    validationErrorMessage: Invalid bundle ID format.
     required: true
 
   - param: ANDROID_SHA
-    label: Android application SHA256
+    label: Android SHA256 Fingerprint
     description: >
-      The Cloud Storage bucket where images that are to be processed are located.
-      API requests with input urls or paths that are not inside this bucket will be
-      dropped.
+      You can find your Android app **SHA Fingerprints** [here](https://console.firebase.google.com/project/${PROJECT_ID}/settings/general/)
+      Your Android links **will not work** without this parameter. 
+      Refer to [this guide](https://developer.android.com/training/app-links/verify-android-applinks#web-assoc) for more information.
     type: string
     example: ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad
     validationRegex: ^([0-9a-z_.-]*)$
-    validationErrorMessage: Invalid SHA256
-    required: true
+    validationErrorMessage: Invalid SHA256 format.
+    required: false

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Link Not Found</title>
+    <meta name="description" content="Requested link was not found." />
+
+    <meta property="og:title" content="Link Not Found" />
+    <meta property="og:description" content="Requested link was not found." />
+    <meta property="og:image" content="{{image}}" />
+
+    <style>
+      body {
+        padding: 0;
+        margin: 0;
+        background-color: #fafafa;
+      }
+
+      #fl-powered {
+        position: absolute;
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 120px;
+      }
+
+      #status {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 180px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <img id="status" src="" />
+    <img id="fl-powered" src="" />
+  </body>
+
+  <script>
+    document.getElementById(
+      "status"
+    ).src = `https://${window.location.hostname}/images/not-found.svg`;
+    document.getElementById(
+      "fl-powered"
+    ).src = `https://${window.location.hostname}/images/fl-powered.svg`;
+  </script>
+</html>

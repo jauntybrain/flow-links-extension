@@ -1,11 +1,51 @@
 # FlowLinks - Dynamic Links Replacement
 
-<img width="150" alt="extension icon" src="./icon.png"/>
+**Author**: JauntyBrain ([https://www.jauntybrain.com](https://www.jauntybrain.com))
 
-**Author**: Jaunty Brain (**[https://jauntybrain.com/](https://jauntybrain.com/)**)
+**Install**: Follow [this link](https://console.firebase.google.com/project/_/extensions/install?ref=jauntybrain/flow-links).
 
-**Description**: FlowLinks is a replacement for the retiring Dynamic Links.
+**Description**: A powerful replacement for the Dynamic Links service that provides similar functionality.
 
-**Details**: This extension is currently under development. Only basic functionality is available.
 
-**Installation**: You can install the Alpha version of the extension using [this link](https://console.firebase.google.com/project/_/extensions/install?ref=jauntybrain/flow-links@0.0.1-alpha.23).
+---
+
+Missing a feature or found a bug? Feel free to submit a [bug report or a feature request](https://github.com/jauntybrain/flow-links-extension/issues). Pull requests are always welcome!
+
+### Installation: Firebase CLI
+
+```bash
+firebase ext:install jauntybrain/flow-links --project=<your-project-id>
+```
+
+
+---
+
+### Details
+
+The Flow Links Extension offers a powerful replacement for the [retiring Dynamic Links](https://firebase.google.com/support/dynamic-links-faq) service and provides similar functionality.
+
+This extension allows you to create **Flow Links** - deep links that work on both iOS and Android platforms.
+
+Upon installation, a new **Firebase Hosting** website & domain are automatically created to handle link functionality.
+
+Newly created links are stored in a **Cloud Firestore** collection.
+
+A friendly-UI **Dashboard** for Flow Links creation and management is currently under development.
+
+Read more about what inspired this extension in [this blog](https://medium.com/@jauntybrain/dynamic-links-are-dead-what-to-do-c73ad0669540).
+
+### Additional setup
+
+Before installing this extension, make sure that you’ve set up the following services in your Firebase project:
+
+- Cloud Firestore database
+- Firebase Hosting
+
+### Billing
+
+To install an extension, your project must be on the [Blaze (pay as you go) plan](https://firebase.google.com/pricing)
+
+This extension uses other Firebase and Google Cloud Platform services, which have associated charges if you exceed the service’s no-cost tier:
+
+- Cloud Firestore
+- Cloud Functions (Node.js 10+ runtime. [See FAQs](https://firebase.google.com/support/faq#extensions-pricing))

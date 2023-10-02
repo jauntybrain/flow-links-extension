@@ -1,26 +1,27 @@
-<!--
-This file provides your users an overview of your extension. All content is optional, but this is the recommended format. Your users will see the contents of this file when they run the `firebase ext:info` command.
+The Flow Links Extension offers a powerful replacement for the [retiring Dynamic Links](https://firebase.google.com/support/dynamic-links-faq) service and provides similar functionality.
 
-Include any important functional details as well as a brief description for any additional setup required by the user (both pre- and post-installation).
+This extension allows you to create **Flow Links** - deep links that work on both iOS and Android platforms.
 
-Learn more about writing a PREINSTALL.md file in the docs:
-https://firebase.google.com/docs/extensions/publishers/user-documentation#writing-preinstall
--->
+Upon installation, a new **Firebase Hosting** website & domain are automatically created to handle link functionality.
 
-# WIP
+Newly created links are stored in a **Cloud Firestore** collection.
 
-Use this extension to send a friendly greeting.
+A friendly-UI **Dashboard** for Flow Links creation and management is currently under development.
 
-When triggered by an HTTP request, this extension responds with your specified friendly greeting.
+Read more about what inspired this extension in [this blog](https://medium.com/@jauntybrain/dynamic-links-are-dead-what-to-do-c73ad0669540).
 
-<!-- We recommend keeping the following section to explain how billing for Firebase Extensions works -->
+### Additional setup
 
-# Billing
+Before installing this extension, make sure that you’ve set up the following services in your Firebase project:
 
-This extension uses other Firebase or Google Cloud Platform services which may have associated charges:
+- Cloud Firestore database
+- Firebase Hosting
 
-<!-- List all products the extension interacts with -->
+### Billing
 
-- Cloud Functions
+To install an extension, your project must be on the [Blaze (pay as you go) plan](https://firebase.google.com/pricing)
 
-When you use Firebase Extensions, you're only charged for the underlying resources that you use. A paid-tier billing plan is only required if the extension uses a service that requires a paid-tier plan, for example calling to a Google Cloud Platform API or making outbound network requests to non-Google services. All Firebase services offer a free tier of usage. [Learn more about Firebase billing.](https://firebase.google.com/pricing)
+This extension uses other Firebase and Google Cloud Platform services, which have associated charges if you exceed the service’s no-cost tier:
+
+- Cloud Firestore
+- Cloud Functions (Node.js 10+ runtime. [See FAQs](https://firebase.google.com/support/faq#extensions-pricing))

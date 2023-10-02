@@ -5,9 +5,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import axios from 'axios';
 
-// import { GoogleAuth } from "google-auth-library";
 import { getExtensions } from "firebase-admin/extensions";
-import { HostingService } from "./hosting-service";
+import { FirebaseService } from "./firebase-service";
 
 // Initialize Firebase Admin SDK
 admin.initializeApp();
@@ -22,11 +21,11 @@ exports.api = functions.https.onRequest(app);
 exports.initialize = functions.tasks.taskQueue()
   .onDispatch(async () => {
     try {
-      const hostingService = new HostingService();
-      await hostingService.init();
+      const firebaseService = new FirebaseService();
+      await firebaseService.init();
 
       // Create a new website
-      const siteID = await hostingService.createNewWebsite();
+      const siteID = await firebaseService.createNewWebsite();
 
       // Specify website config
       const configPayload = {
@@ -43,34 +42,24 @@ exports.initialize = functions.tasks.taskQueue()
       };
 
       // Get the new version ID
-      const versionID = await hostingService.createNewVersion(siteID, configPayload);
-
-      // Specify files for upload
-      // Ex: cat index.html.gz | openssl dgst -sha256
-      const files = [
-        {
-          "name": "/index.html",
-          "sha": "04f0dc5b6532f6e6f0c441520f8100a60a5915099c5f705db9f087771fd470ef"
-        },
-        {
-          "name": "/404.html",
-          "sha": "359f7d565aae5dfbd9aacf7aa4ed7c4378cc9ab18c4ee6f895e49d6c6e197512"
-        }
-      ]
-
-      // Populate files list for the new version
-      await hostingService.populateFiles(siteID, versionID, files);
-
-      // Upload files
-      for (var file of files) {
-        await hostingService.uploadFile(siteID, versionID, file);
-      }
+      const versionID = await firebaseService.createNewVersion(siteID, configPayload);
 
       // Finalize version
-      await hostingService.finalizeVersion(siteID, versionID);
+      await firebaseService.finalizeVersion(siteID, versionID);
 
       // Deploy to hosting
-      await hostingService.deployVersion(siteID, versionID);
+      await firebaseService.deployVersion(siteID, versionID);
+
+      const db = admin.firestore();
+      const collection = db.collection('_flowlinks_');
+      await collection.add({
+        'path': 'welcome',
+        'og:title': 'Welcome to FlowLinks',
+        'og:description': 'Time to set them up!',
+        'og:image': `https://${siteID}/images/thumb.jpg`,
+        'redirectToStore': false,
+        'redirectUrl': '',
+      });
 
       // Finalize extension initialization
       await getExtensions().runtime().setProcessingState(
@@ -103,11 +92,17 @@ exports.initialize = functions.tasks.taskQueue()
     }
   });
 
+// Error handling middleware
+app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error("Error:", err);
+  res.status(500).send('Internal Server Error');
+});
+
 // iOS Association
 app.get('/.well-known/apple-app-site-association', (req, res) => {
-  const applicationID = `${process.env.IOS_TEAM_ID}.${process.env.IOS_BUNDLE_ID}`
+  const applicationID = `${process.env.IOS_TEAM_ID}.${process.env.IOS_BUNDLE_ID}`;
 
-  res.writeHead(200, { 'Content-Type': 'application/json' })
+  res.writeHead(200, { 'Content-Type': 'application/json' });
   res.write(JSON.stringify({
     "applinks": {
       "apps": [],
@@ -123,13 +118,13 @@ app.get('/.well-known/apple-app-site-association', (req, res) => {
         applicationID
       ]
     }
-  }))
+  }));
   res.end();
 });
 
 // Android Association
 app.get('/.well-known/assetlinks.json', (req, res) => {
-  res.writeHead(200, { 'Content-Type': 'application/json' })
+  res.writeHead(200, { 'Content-Type': 'application/json' });
   res.write(JSON.stringify(
     [{
       "relation": [
@@ -143,26 +138,83 @@ app.get('/.well-known/assetlinks.json', (req, res) => {
         ]
       }
     }]
-  ))
+  ));
   res.end();
 });
 
-// WIP
-app.get('*', (req, res, next) => {
-  // Define values
-  const title = 'My Amazing Application';
-  const subtitle = 'Find out more about the app...';
-  const image = 'https://.../your-app-banner.jpg';
+// Host images
+app.use('/images', express.static(path.join(__dirname, './assets/images')));
 
-  // Load HTML template
-  const templatePath = path.join(__dirname, './assets/html/index.html');
+// Handle all other routes
+app.get('*', async (req, res, next) => {
+  try {
+    const urlParts = req.url.split('?');
+    const linkPath = urlParts[0].split('/').pop();
 
-  // Replace handles with content
-  var source = fs.readFileSync(templatePath, { encoding: 'utf-8' })
-    .replaceAll('{{title}}', title)
-    .replaceAll('{{subtitle}}', subtitle)
-    .replaceAll('{{image}}', image);
+    const db = admin.firestore();
+    const collection = db.collection('_flowlinks_');
 
-  // Return the webpage
-  return res.send(source);
+    const linkSnapshot = await collection.where('path', '==', linkPath).get();
+    const linkFound = linkSnapshot.docs.length !== 0;
+
+    if (!linkFound) {
+      // If the requested link doesn't exist, return 404
+      const notFoundImage = `https://${req.hostname}/images/404-thumb.jpg`;
+      const templatePath = path.join(__dirname, './assets/html/404.html')
+        .replaceAll('{{image}}', notFoundImage);
+      const source = fs.readFileSync(templatePath, { encoding: 'utf-8' });
+      return res.status(404).send(source);
+    }
+
+    const linkData = linkSnapshot.docs[0].data();
+
+    // Gather metadata
+    const title = linkData['og:title'] || '';
+    const description = linkData['og:description'] || '';
+    const image = linkData['og:image'] || '';
+    const redirectToStore = linkData['redirectToStore'] || false;
+    const redirectUrl = linkData['redirectUrl'] || '';
+
+    const templatePath = path.join(__dirname, './assets/html/index.html');
+
+    // Get iOS AppStore appID
+    let appStoreID = '';
+    if (redirectToStore) {
+      appStoreID = (await getAppStoreID(process.env.IOS_BUNDLE_ID!)) || '';
+    }
+
+    const source = fs.readFileSync(templatePath, { encoding: 'utf-8' })
+      .replaceAll('{{title}}', title)
+      .replaceAll('{{description}}', description)
+      .replaceAll('{{image}}', image)
+      .replaceAll('{{appStoreID}}', appStoreID)
+      .replaceAll('{{playStoreID}}', process.env.ANDROID_BUNDLE_ID!)
+      .replaceAll('{{redirectToStore}}', redirectToStore)
+      .replaceAll('{{redirectUrl}}', redirectUrl);
+
+    return res.send(source);
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).send('Internal Server Error');
+  }
 });
+
+// Get AppStore numeric ID
+async function getAppStoreID(bundleId: string): Promise<string | null> {
+  try {
+    const response = await axios.get(`http://itunes.apple.com/lookup?bundleId=${bundleId}`);
+    console.log(response.data);
+
+    if (response.data && response.data.results && response.data.results.length > 0) {
+      const appInfo = response.data.results[0];
+      if (appInfo.trackId) {
+        return appInfo.trackId;
+      }
+    }
+
+    return null; // App Store URL not found in the response
+  } catch (error) {
+    console.error('Error fetching data from iTunes API:', error);
+    return null;
+  }
+}
