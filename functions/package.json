@@ -1,5 +1,5 @@
 {
-  "name": "flow-links",
+  "name": "firebase-flow-links",
   "scripts": {
     "lint": "eslint \"src/**/*\"",
     "lint:fix": "eslint \"src/**/*\" --fix",

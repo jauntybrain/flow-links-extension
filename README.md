@@ -14,7 +14,7 @@
 
 **Author**: JauntyBrain ([https://www.jauntybrain.com](https://www.jauntybrain.com))
 
-**Install**: Follow [this link](https://console.firebase.google.com/project/_/extensions/install?ref=jauntybrain/flow-links).
+**Install**: Follow [this link](https://console.firebase.google.com/project/_/extensions/install?ref=jauntybrain/firebase-flow-links).
 
 **Description**: Let your deep links flow with Flow Links: a powerful alternative to retiring Dynamic Links, featuring a dedicated auto-generated Firebase Hosting website and easy Cloud Firestore integration.
 
@@ -26,7 +26,7 @@ Missing a feature or found a bug? Feel free to submit a [bug report or a feature
 ### Installation: Firebase CLI
 
 ```bash
-firebase ext:install jauntybrain/flow-links --project=<your-project-id>
+firebase ext:install jauntybrain/firebase-flow-links --project=<your-project-id>
 ```
 
 
