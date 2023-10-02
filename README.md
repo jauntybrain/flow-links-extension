@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/jauntybrain/flow-links-extension/assets/105740958/0484ed43-a8bc-4958-abd6-eb998f0a70ae">
-    <img width="400px" src="https://github.com/jauntybrain/flow-links-extension/assets/105740958/35d91f07-1d89-46ba-8461-a4fbe3cc6f2a">
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/jauntybrain/flow-links-extension/assets/105740958/0c0e7bd0-394c-45d2-b11d-fc77795800ad">
+    <img width="400px" src=https://github.com/jauntybrain/flow-links-extension/assets/105740958/6a357831-3b08-45f7-9269-54718257f9c6">
   </picture>
 </p>
 
