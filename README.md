@@ -1,5 +1,8 @@
 <p align="center">
-  <img width="500px" src="https://github.com/jauntybrain/flow-links-extension/assets/105740958/b67f6cd5-e622-4eb4-af5e-6274aa0a061f"/>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/jauntybrain/flow-links-extension/assets/105740958/0484ed43-a8bc-4958-abd6-eb998f0a70ae">
+    <img width="400px" src="https://github.com/jauntybrain/flow-links-extension/assets/105740958/35d91f07-1d89-46ba-8461-a4fbe3cc6f2a">
+  </picture>
 </p>
 
 # FlowLinks - Dynamic Links Replacement
