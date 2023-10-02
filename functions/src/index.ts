@@ -56,7 +56,7 @@ exports.initialize = functions.tasks.taskQueue()
         'path': 'welcome',
         'og:title': 'Welcome to FlowLinks',
         'og:description': 'Time to set them up!',
-        'og:image': `https://${siteID}/images/thumb.jpg`,
+        'og:image': `https://${siteID}.web.app/images/thumb.jpg`,
         'redirectToStore': false,
         'redirectUrl': '',
       });
@@ -148,6 +148,8 @@ app.use('/images', express.static(path.join(__dirname, './assets/images')));
 // Handle all other routes
 app.get('*', async (req, res, next) => {
   try {
+    const hostname = `${process.env.PROJECT_ID}-${process.env.EXT_INSTANCE_ID}.web.app`;
+
     const urlParts = req.url.split('?');
     const linkPath = urlParts[0].split('/').pop();
 
@@ -159,10 +161,17 @@ app.get('*', async (req, res, next) => {
 
     if (!linkFound) {
       // If the requested link doesn't exist, return 404
-      const notFoundImage = `https://${req.hostname}/images/404-thumb.jpg`;
+      const thumbnail = `https://${hostname}/images/404-thumb.jpg`;
+      const notFoundImage = `https://${hostname}/images/not-found.svg`;
+      const flPoweredImage = `https://${hostname}/images/fl-powered.svg`;
+
       const templatePath = path.join(__dirname, './assets/html/404.html')
-        .replaceAll('{{image}}', notFoundImage);
-      const source = fs.readFileSync(templatePath, { encoding: 'utf-8' });
+
+      const source = fs.readFileSync(templatePath, { encoding: 'utf-8' })
+        .replaceAll('{{thumbnail}}', thumbnail)
+        .replaceAll('{{notFoundImage}}', notFoundImage)
+        .replaceAll('{{flPoweredImage}}', flPoweredImage);
+
       return res.status(404).send(source);
     }
 
@@ -183,14 +192,19 @@ app.get('*', async (req, res, next) => {
       appStoreID = (await getAppStoreID(process.env.IOS_BUNDLE_ID!)) || '';
     }
 
+    const statusImage = `https://${hostname}/images/status.svg`;
+    const flPoweredImage = `https://${hostname}/images/fl-powered.svg`;
+
     const source = fs.readFileSync(templatePath, { encoding: 'utf-8' })
       .replaceAll('{{title}}', title)
       .replaceAll('{{description}}', description)
-      .replaceAll('{{image}}', image)
       .replaceAll('{{appStoreID}}', appStoreID)
       .replaceAll('{{playStoreID}}', process.env.ANDROID_BUNDLE_ID!)
       .replaceAll('{{redirectToStore}}', redirectToStore)
-      .replaceAll('{{redirectUrl}}', redirectUrl);
+      .replaceAll('{{redirectUrl}}', redirectUrl)
+      .replaceAll('{{thumbnail}}', image)
+      .replaceAll('{{statusImage}}', statusImage)
+      .replaceAll('{{flPoweredImage}}', flPoweredImage);
 
     return res.send(source);
   } catch (error) {
