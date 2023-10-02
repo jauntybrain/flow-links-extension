@@ -4,7 +4,10 @@ specVersion: v1beta
 
 displayName: FlowLinks - Dynamic Links Replacement
 
-# Brief description of the task your extension performs (~1 sentence)
+author:
+  authorName: JauntyBrain
+  url: https://github.com/jauntybrain/
+
 description: >-
   Replaces Dynamic Links with ease.
 
@@ -12,19 +15,27 @@ icon: icon.png
 
 license: Apache-2.0
 
+tags:
+  [
+    marketing,
+    utilities
+  ]
+
 sourceUrl: https://github.com/jauntybrain/flow-links-extension
 
 billingRequired: true
 
 apis:
   - apiName: firebasehosting.googleapis.com
-    reason: Hosting API is required to push link accreditations
+    reason: Required for hosting a dedicated website to handle Flow Links.
+  - apiName: firestore.googleapis.com
+    reason: Required for storing Flow Links information.
 
 roles:
   - role: firebasehosting.admin
-    reason: Required to support custom domain as past of the flow links accreditation with Apple/Google
+    reason: Required for creating and publishing a new Hosting website.
   - role: datastore.user
-    reason: Allows the extension to create the links config in Firestore
+    reason: Required for updating and viewing Flow Links in Cloud Firestore.
 
 resources:
   - name: initialize
@@ -115,7 +126,6 @@ params:
     label: Team ID of your iOS application
     description: >
       You can find your iOS app **Team ID** [here](https://console.firebase.google.com/project/${PROJECT_ID}/settings/general/).
-      (Project settings (cog icon) -> General -> Your apps -> Apple apps)
       It is also possible (but not recommended) to add an application that is not linked to this Firebase project.
     type: string
     example: 12ABCD57D3
@@ -126,7 +136,7 @@ params:
   - param: ANDROID_BUNDLE_ID
     label: Bundle ID of your Android application
     description: >
-      You can find your Android app **Bundle ID** [here](https://console.firebase.google.com/project/${PROJECT_ID}/settings/general/)
+      You can find your Android app **Bundle ID** [here](https://console.firebase.google.com/project/${PROJECT_ID}/settings/general/).
       It is also possible (but not recommended) to add an application that is not linked to this Firebase project.
     type: string
     example: com.example.myawesomeapp
@@ -137,11 +147,9 @@ params:
   - param: ANDROID_SHA
     label: Android SHA256 Fingerprint
     description: >
-      You can find your Android app **SHA Fingerprints** [here](https://console.firebase.google.com/project/${PROJECT_ID}/settings/general/)
-      Your Android links **will not work** without this parameter. 
+      You can find your Android app **SHA Fingerprints** [here](https://console.firebase.google.com/project/${PROJECT_ID}/settings/general/).
+      Your Android links **will not work** without this parameter. Fingerprint must be written in **all caps**.
       Refer to [this guide](https://developer.android.com/training/app-links/verify-android-applinks#web-assoc) for more information.
     type: string
-    example: ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad
-    validationRegex: ^([0-9a-z_.-]*)$
-    validationErrorMessage: Invalid SHA256 format.
+    example: FF:2A:CF:7B:DD:CC:F1:03:3E:E8:B2:27:7C:A2:E3:3C:DE:13:DB:AC:8E:EB:3A:B9:72:A1:0E:26:8A:F5:EC:AF
     required: false

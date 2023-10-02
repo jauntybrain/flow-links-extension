@@ -2,21 +2,24 @@
 
 Thank you for using FlowLinks.
 
+
 ## Dashboard: Coming Soon
 
 The Dashboard will allow editing links through a neat user interface. It is currently under development and will be available soon.
 
 For now, you can manage your Flow Links using Firestore.
 
+
 ## How to access the links
 
-The extension has automatically created a new website with [Firebase Hosting](https://console.firebase.google.com/project/${param:PROJECT_ID}/hosting/sites).
+The extension has automatically created a new website with [Firebase Hosting](https://console.firebase.google.com/project/${param:PROJECT_ID}/hosting/sites/${param:PROJECT_ID}-${param:EXT_INSTANCE_ID}).
 
 Your website URL is: [https://${param:PROJECT_ID}-${param:EXT_INSTANCE_ID}.web.app/](https://${param:PROJECT_ID}-${param:EXT_INSTANCE_ID}.web.app/).
 
 This website will handle all created FlowLinks and it's domain name must be added to the application that you would like to open the links in.
 
 Due to a quite lengthy domain name, it's advised to link a [custom domain/subdomain](https://firebase.google.com/docs/hosting/custom-domain) to the new website and add that domain to the application.
+
 
 ## How to set up the links
 
@@ -49,13 +52,15 @@ The setup is similar to Dynamic Links and must follow this structure:
 
 - `redirectUrl`: redirects the link to a custom URL when the app is not installed. **redirectToStore** must be set to 'false' for this to work. **Must start with "https://"**
 
+
 ## How to handle query parameters
 
 Any `path` that was added to the `_flowlinks_` collection can have custom query parameters when called. There is no need to specify them in the colleciton.
 
+
 ## Links logic
 
-Your links are curerntly set up for an iOS app (`${param:IOS_BUNDLE_ID}`) and an Android app (`${param:ANDROID_APP_ID}`).
+Your links are curerntly set up for an iOS app (`${param:IOS_BUNDLE_ID}`) and an Android app (`${param:ANDROID_BUNDLE_ID}`).
 
 1. If the link is opened on a platform that is not iOS/Android, it will do nothing or redirect the user is `redirectUrl` is set.
 
@@ -67,6 +72,7 @@ Your links are curerntly set up for an iOS app (`${param:IOS_BUNDLE_ID}`) and an
 
    - If the `redirectToStore` is `false` and `redirectUrl` is set up, it will redirect the user.
 
+
 ## How to handle links in the apps
 
 Unfortunately, this extension does not support the Dynamic Links libraries/packages. Therefore, it is recommended to use the native implementations for handling deep links - most of them are very easy to setup:
@@ -76,13 +82,16 @@ Unfortunately, this extension does not support the Dynamic Links libraries/packa
 - [Native Android](https://developer.android.com/training/app-links)
 - [Native iOS](https://developer.apple.com/documentation/xcode/supporting-universal-links-in-your-app)
 
+
 ## Shorten URLs: Coming Soon
 
 The short URLs implementation is currently in progress and will be available later.
 
+
 ## Missing a feature or have a question?
 
 Feel free to open a new issue [here](https://github.com/jauntybrain/flow-links-extension/issues).
+
 
 ## Monitoring
 
