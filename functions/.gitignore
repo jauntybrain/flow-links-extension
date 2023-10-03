@@ -2,6 +2,8 @@
 **/*.js
 **/*.js.map
 
+.DS_Store
+
 # Typescript v1 declaration files
 typings/
 

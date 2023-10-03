@@ -1,5 +1,5 @@
 name: firebase-flow-links
-version: 0.1.1
+version: 0.1.2
 specVersion: v1beta
 
 displayName: FlowLinks - Dynamic Links Replacement
@@ -14,11 +14,7 @@ icon: icon.png
 
 license: Apache-2.0
 
-tags:
-  [
-    marketing,
-    utilities,
-  ]
+tags: [marketing, utilities]
 
 sourceUrl: https://github.com/jauntybrain/flow-links-extension/tree/main
 releaseNotesUrl: https://github.com/jauntybrain/flow-links-extension/tree/main/CHANGELOG.md
@@ -43,23 +39,23 @@ resources:
     description: >-
       Initializes the extension. Creates a new Hosting website that will handle Flow Links.
     properties:
-      location: ${param:LOCATION}
+      location: ${LOCATION}
       taskQueueTrigger: {}
-      runtime: 'nodejs16'
+      runtime: "nodejs16"
 
   - name: api
     type: firebaseextensions.v1beta.function
     description: >-
       Express server that handles all Flow Links.
     properties:
-      location: ${param:LOCATION}
+      location: ${LOCATION}
       httpsTrigger: {}
-      runtime: 'nodejs16'
+      runtime: "nodejs16"
 
 lifecycleEvents:
   onInstall:
     function: initialize
-    processingMessage: Intitializing the extension... This will take a minute.
+    processingMessage: Intitializing the extension... This will take some time.
 
 params:
   - param: LOCATION
@@ -155,3 +151,16 @@ params:
     type: string
     example: FF:2A:CF:7B:DD:CC:F1:03:3E:E8:B2:27:7C:A2:E3:3C:DE:13:DB:AC:8E:EB:3A:B9:72:A1:0E:26:8A:F5:EC:AF
     required: false
+
+  - param: DOMAIN_POSTFIX
+    label: Domain name postfix
+    description: >
+      The domain name that will serve FlowLinks will always start with your projectID and end with a custom postfix.
+      **Make sure to specify a different postfix from other instances of the FlowLinks Extension.**
+      https://${PROJECT_ID}-YOUR_DOMAIN_POSTFIX.web.app.
+    type: string
+    default: flowlinks
+    validationRegex: ^([0-9a-zA-Z_.-]*)$
+    validationErrorMessage: Invalid postfix format.
+    required: true
+    immutable: true

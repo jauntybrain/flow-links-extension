@@ -1,76 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-        <meta name="apple-mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-status-bar-style" content="white">
-    
-        <link rel="icon" type="image/png" href="">
-        <link rel="mask-icon" href="" color="#ffffff">
-    
-        <title>{{title}}</title>
-        <meta name="description" content="{{subtitle}}" />
-        <meta property="og:title" content="{{title}}" />
-        <meta property="og:description" content="{{description}}" />
-        <meta property="og:image" content="{{thumbnail}}" />
-        <meta property="og:type" content="website" />
-        <meta property="og:locale" content="en_US" />
-    
-        <meta name="twitter:card" content="summary_large_image"></meta>
-        <meta name="twitter:title" content="{{title}}"></meta>
-        <meta name="twitter:description" content="{{description}}"></meta>
-        <meta name="twitter:image" content="{{thumbnail}}"></meta>
-    
-        <link rel="apple-touch-icon" href="">
-    
-        <style>
-            body {
-                padding: 0;
-                margin: 0;
-                background-color: #ffffff;
-            }
-            
-            #fl-powered {
-                position: absolute;
-                position: absolute;
-                bottom: 0px;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                width: 120px;
-            }
-            
-            #status{
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                width: 180px;
-            }
-        </style>
-    </head>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Detect.js/2.2.2/detect.min.js" integrity="sha512-iNuMM5cmiXDvk4VCTp6UEbDwYy/dA3CFTTYKB6/V+LD62S58TQZ+sykXzhmVT1QvqHD39ZhecsPGXjZUaIuSWQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    
-    <body>
-        <img id="status" src="{{statusImage}}" />
-        <a href="https://extensions.dev/extensions/jauntybrain/firebase-flow-links">
-            <img id="fl-powered" src="{{flPoweredImage}}" />
-        </a>
-    </body>
-    
-    <script>
-        if('{{redirectToStore}}' == 'true') {
-            console.log('redirecting!');
-            var result = detect.parse(navigator.userAgent);
-            if (result.os.family === 'iOS') {
-                window.location.href = 'https://apps.apple.com/us/app/{{appStoreID}}';
-            } else if (result.os.family.includes('Android')) {
-                window.location.href = 'https://play.google.com/store/apps/details?id={{playStoreID}}';
-            }
-        } else if('{{redirectUrl}}' != '') {
-            window.location.href = '{{redirectUrl}}';
-        }
-    </script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="white" />
+
+    <link rel="icon" type="image/png" href="" />
+    <link rel="mask-icon" href="" color="#ffffff" />
+
+    <title>{{title}}</title>
+    <meta name="description" content="{{description}}" />
+
+    <meta property="og:title" content="{{title}}" />
+    <meta property="og:description" content="{{description}}" />
+    <meta property="og:image" content="{{thumbnail}}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{title}}" />
+    <meta name="twitter:description" content="{{description}}" />
+    <meta name="twitter:image" content="{{thumbnail}}" />
+
+    <link rel="apple-touch-icon" href="" />
+
+    <style>
+      body {
+        padding: 0;
+        margin: 0;
+        background-color: black;
+        background-size: cover;
+        background-image: url("{{backgroundImage}}");
+      }
+
+      #fl-powered {
+        position: absolute;
+        position: absolute;
+        bottom: 0px;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 120px;
+      }
+
+      #status {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 200px;
+      }
+    </style>
+  </head>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Detect.js/2.2.2/detect.min.js" integrity="sha512-iNuMM5cmiXDvk4VCTp6UEbDwYy/dA3CFTTYKB6/V+LD62S58TQZ+sykXzhmVT1QvqHD39ZhecsPGXjZUaIuSWQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <body>
+    <img id="status" src="{{statusImage}}" />
+    <a href="https://extensions.dev/extensions/jauntybrain/firebase-flow-links">
+      <img id="fl-powered" src="{{flPoweredImage}}" />
+    </a>
+  </body>
+
+  <script>
+    if ("{{redirectToStore}}" == "true") {
+      var result = detect.parse(navigator.userAgent);
+      if (result.os.family === "iOS") {
+        window.location.href = "https://apps.apple.com/us/app/{{appStoreID}}";
+      } else if (result.os.family.includes("Android")) {
+        window.location.href =
+          "https://play.google.com/store/apps/details?id={{playStoreID}}";
+      }
+    }
+    else if('{{redirectUrl}}' != '') {
+        window.location.href = '{{redirectUrl}}';
+    }
+  </script>
 </html>
