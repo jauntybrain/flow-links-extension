@@ -20,7 +20,7 @@ Due to a quite lengthy domain name, it's advised to link a [custom domain/subdom
 
 ## How to set up the links
 
-The extension has automatically created a new Firestore collection called `_flowlinks_`. Every document in that collection represents a dynamic/flow link.
+The extension has automatically created a new Firestore collection called `_flowlinks_`. Every document in that collection represents a flow link.
 
 A sample path `/welcome` was created as a reference. Check it out [here](https://${param:PROJECT_ID}-${param:DOMAIN_POSTFIX}.web.app/welcome).
 
@@ -38,7 +38,7 @@ The setup is similar to Dynamic Links and must follow this structure:
 }
 ```
 
-- `path`: represents the URL path for your link (e.g. /referral).
+- `path`: represents the URL path for your link (e.g. /referral). **Must start with a backslash**.
 
 - `og:title`: represents the meta-tag **title** of the link.
 
@@ -57,7 +57,7 @@ The setup is similar to Dynamic Links and must follow this structure:
 
 Any `path` that was added to the `_flowlinks_` collection can have custom query parameters when called. There is no need to specify them in the colleciton.
 
-## How to handle multi-level paths
+## How to handle multi-level pathså
 
 Flowlinks support multi-level paths (i.e. `/archive/2004/articles/`) out of the box!
 

@@ -74,7 +74,7 @@ exports.initialize = functions.tasks.taskQueue()
 
       // Add a sample flow link
       await collection.add({
-        'path': 'welcome',
+        'path': '/welcome',
         'og:title': 'Welcome to FlowLinks',
         'og:description': 'Time to set them up!',
         'og:image': `https://${siteID}.web.app/images/thumb.jpg`,
@@ -166,7 +166,7 @@ app.get('*', async (req, res, next) => {
 
     // Parse link data
     const urlObject = new URL(req.url, 'https://flowlinks');
-    const linkPath = urlObject.pathname.substring(1);
+    const linkPath = urlObject.pathname;
 
     // Fetch link document
     const snapshotQuery = collection.where('path', '==', linkPath).limit(1);
