@@ -10,7 +10,7 @@
 </p>
 
 
-# FlowLinks - Dynamic Links Replacement
+# FlowLinks - Dynamic Links Alternative
 
 **Author**: JauntyBrain ([https://www.jauntybrain.com](https://www.jauntybrain.com))
 
@@ -34,7 +34,7 @@ firebase ext:install jauntybrain/firebase-flow-links --project=<your-project-id>
 
 ### Details
 
-The Flow Links Extension offers a powerful replacement for the [retiring Dynamic Links](https://firebase.google.com/support/dynamic-links-faq) service and provides similar functionality.
+The Flow Links Extension offers a powerful alternative for the [retiring Dynamic Links](https://firebase.google.com/support/dynamic-links-faq) service and provides similar functionality.
 
 This extension allows you to create **Flow Links** - deep links that work on both iOS and Android platforms.
 

@@ -1,8 +1,8 @@
 name: firebase-flow-links
-version: 0.1.2
+version: 0.1.3
 specVersion: v1beta
 
-displayName: FlowLinks - Dynamic Links Replacement
+displayName: FlowLinks - Dynamic Links Alternative
 
 author:
   authorName: JauntyBrain

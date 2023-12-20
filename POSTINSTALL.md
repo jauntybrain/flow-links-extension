@@ -2,13 +2,13 @@
 
 Thank you for using FlowLinks.
 
-## Dashboard: Coming Soon
+## Dashboard
 
-The Dashboard will allow editing links through a neat user interface. It is currently under development and will be available soon.
-
-For now, you can manage your Flow Links using Firestore.
+The Dashboard allows editing flow links through friendly user interface. You can find it [here](https://edit.flowlinks.app/).
 
 ## How to access the links
+
+Before testing the extension, make sure the initialization is complete by checking the `Runtime status` tab.
 
 The extension has automatically created a new website with [Firebase Hosting](https://console.firebase.google.com/project/${param:PROJECT_ID}/hosting/sites/${param:PROJECT_ID}-${param:DOMAIN_POSTFIX}).
 
@@ -34,6 +34,7 @@ The setup is similar to Dynamic Links and must follow this structure:
     "og:image": (optional, String)
     "redirectToStore": (optional, Bool)
     "redirectUrl": (optional, String. Must start with "https://")
+    "expires": (optional, Timestamp)
 }
 ```
 
@@ -49,9 +50,16 @@ The setup is similar to Dynamic Links and must follow this structure:
 
 - `redirectUrl`: redirects the link to a custom URL when the app is not installed. **redirectToStore** must be set to 'false' for this to work. **Must start with "https://"**
 
+- `expires`: specifies the Timestamp after which the link will become inactive. Note: this will still make the link open the app.
+
+
 ## How to handle query parameters
 
 Any `path` that was added to the `_flowlinks_` collection can have custom query parameters when called. There is no need to specify them in the colleciton.
+
+## How to handle multi-level paths
+
+Flowlinks support multi-level paths (i.e. `/archive/2004/articles/`) out of the box!
 
 ## Links logic
 
@@ -69,7 +77,7 @@ Your links are curerntly set up for an iOS app (`${param:IOS_BUNDLE_ID}`) and an
 
 ## How to handle links in the apps
 
-Unfortunately, this extension does not support the Dynamic Links libraries/packages. Therefore, it is recommended to use the native implementations for handling deep links - most of them are very easy to setup:
+Unfortunately, this extension does not support the Firebase Dynamic Links libraries/packages. Therefore, it is recommended to use the native implementations for handling deep links - most of them are very easy to setup:
 
 - [Flutter](https://pub.dev/packages/uni_links)
 - [React Native](https://reactnative.dev/docs/linking)
@@ -83,6 +91,10 @@ The short URLs implementation is currently in progress and will be available lat
 ## Missing a feature or have a question?
 
 Feel free to open a new issue [here](https://github.com/jauntybrain/flow-links-extension/issues).
+
+## Known issues
+
+- Links take a long time to load when opened for the first time in a while due to the Cloud Functions creating a new instance for the process. Sadly, there is no workaround for it yet.
 
 ## Monitoring
 

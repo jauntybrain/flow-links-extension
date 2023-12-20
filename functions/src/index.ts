@@ -1,12 +1,9 @@
 import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
 import * as express from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
 import axios from 'axios';
 
-import { getExtensions } from 'firebase-admin/extensions';
-import { FirebaseService } from './firebase-service';
 import FlowLink from './flow-link';
 import config from './config';
 
@@ -21,13 +18,6 @@ const {
   domainPostfix,
 } = config;
 
-// Initialize Firebase Admin SDK
-admin.initializeApp();
-
-// Initialize Firestore
-const db = admin.firestore();
-const collection = db.collection('_flowlinks_');
-
 // Initialize Express app
 const app = express();
 
@@ -40,7 +30,18 @@ const hostname = `${projectID}-${domainPostfix}.web.app`;
 // Initializate extension
 exports.initialize = functions.tasks.taskQueue()
   .onDispatch(async () => {
+    const { getExtensions } = await import('firebase-admin/extensions');
+    const { FirebaseService } = await import('./firebase-service');
+    const admin = await import('firebase-admin');
+
     try {
+      // Initialize Firebase Admin SDK
+      admin.initializeApp();
+
+      // Initialize Firestore
+      const db = admin.firestore();
+      const collection = db.collection('_flowlinks_');
+
       // Initialize Firebase Service
       const firebaseService = new FirebaseService();
       await firebaseService.init();
@@ -107,7 +108,7 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
 });
 
 // iOS Association
-app.get('/.well-known/apple-app-site-association', (req, res) => {
+app.get('/.well-known/apple-app-site-association', async (req, res) => {
   const applicationID = `${iosTeamID}.${iosAppID}`;
 
   res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -116,9 +117,7 @@ app.get('/.well-known/apple-app-site-association', (req, res) => {
       'apps': [],
       'details': [{
         'appID': applicationID,
-        'paths': [
-          '*',
-        ],
+        'paths': ['*'],
       }],
     },
     'webcredentials': {
@@ -154,9 +153,20 @@ app.use('/images', express.static(path.join(__dirname, './assets/images')));
 // Handle all other routes
 app.get('*', async (req, res, next) => {
   try {
+    const admin = await import('firebase-admin');
+
+    // Initialize Firebase Admin SDK
+    try {
+      admin.initializeApp();
+    } catch (_) { }
+
+    // Get Firestore instance
+    const db = admin.firestore();
+    const collection = db.collection('_flowlinks_');
+
     // Parse link data
-    const urlParts = req.url.split('?');
-    const linkPath = urlParts[0].split('/').pop();
+    const urlObject = new URL(req.url, 'https://flowlinks');
+    const linkPath = urlObject.pathname.substring(1);
 
     // Fetch link document
     const snapshotQuery = collection.where('path', '==', linkPath).limit(1);
@@ -164,14 +174,15 @@ app.get('*', async (req, res, next) => {
 
     const linkFound = linkSnapshot.docs.length !== 0;
 
+    // If not found, return 404
     if (!linkFound) {
-      // If not found, return 404
       return res.status(404).send(getNotFoundResponse());
     }
 
     const flowLink = linkSnapshot.docs[0].data() as FlowLink;
     const source = await getFlowLinkResponse(flowLink);
 
+    res.setHeader('Cache-Control', 'public, max-age=86400');
     return res.status(200).send(source);
   } catch (error) {
     functions.logger.error('Error processing FlowLink: ', error);
@@ -198,11 +209,17 @@ function getNotFoundResponse(): string {
 
 async function getFlowLinkResponse(flowLink: FlowLink): Promise<string> {
   // Gather metadata
-  const title = flowLink['og:title'] || '';
-  const description = flowLink['og:description'] || '';
-  const image = flowLink['og:image'] || '';
+  let title = flowLink['og:title'] || '';
+  let description = flowLink['og:description'] || '';
+  let image = flowLink['og:image'] || '';
+
   const redirectToStore = flowLink.redirectToStore || false;
   const redirectUrl = flowLink.redirectUrl || '';
+  const expires = flowLink.expires;
+
+  if (expires && expires.toMillis() < Date.now()) {
+    return ''; // Return nothing if the timestamp is in the past
+  }
 
   const statusImage = `https://${hostname}/images/status.svg`;
   const flPoweredImage = `https://${hostname}/images/fl-powered.svg`;

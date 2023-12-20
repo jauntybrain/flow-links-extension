@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase-admin/firestore";
+
 export default interface FlowLink {
     id?: string;
     path?: string;
@@ -6,4 +8,5 @@ export default interface FlowLink {
     'og:image'?: string;
     redirectToStore?: boolean;
     redirectUrl?: string;
+    expires?: Timestamp;
 }

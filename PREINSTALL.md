@@ -1,4 +1,4 @@
-The Flow Links Extension offers a powerful replacement for the [retiring Dynamic Links](https://firebase.google.com/support/dynamic-links-faq) service and provides similar functionality.
+The Flow Links Extension offers a powerful alternative for the [retiring Dynamic Links](https://firebase.google.com/support/dynamic-links-faq) service and provides similar functionality.
 
 This extension allows you to create **Flow Links** - deep links that work on both iOS and Android platforms.
 
