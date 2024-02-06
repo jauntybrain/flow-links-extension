@@ -9,7 +9,6 @@
   </picture>
 </p>
 
-
 # FlowLinks - Dynamic Links Alternative
 
 **Author**: JauntyBrain ([https://www.jauntybrain.com](https://www.jauntybrain.com))
@@ -17,7 +16,6 @@
 **Install**: Follow [this link](https://console.firebase.google.com/project/_/extensions/install?ref=jauntybrain/firebase-flow-links).
 
 **Description**: Let your deep links flow with Flow Links: a powerful alternative to retiring Dynamic Links, featuring a dedicated auto-generated Firebase Hosting website and easy Cloud Firestore integration.
-
 
 ---
 
@@ -28,7 +26,6 @@ Missing a feature or found a bug? Feel free to submit a [bug report or a feature
 ```bash
 firebase ext:install jauntybrain/firebase-flow-links --project=<your-project-id>
 ```
-
 
 ---
 
@@ -42,7 +39,7 @@ Upon installation, a new **Firebase Hosting** website & domain are automatically
 
 Newly created links are stored in a **Cloud Firestore** collection.
 
-A friendly-UI **Dashboard** for Flow Links creation and management is currently under development.
+Create and manage your links with the **FlowLinks Dashboard**.
 
 Read more about what inspired this extension in [this blog](https://medium.com/@jauntybrain/dynamic-links-are-dead-what-to-do-c73ad0669540).
 

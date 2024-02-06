@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -32,7 +32,7 @@
         margin: 0;
         background-color: black;
         background-size: cover;
-        background-image: url("{{backgroundImage}}");
+        background-image: url('{{backgroundImage}}');
       }
 
       #fl-powered {
@@ -54,7 +54,12 @@
     </style>
   </head>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Detect.js/2.2.2/detect.min.js" integrity="sha512-iNuMM5cmiXDvk4VCTp6UEbDwYy/dA3CFTTYKB6/V+LD62S58TQZ+sykXzhmVT1QvqHD39ZhecsPGXjZUaIuSWQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/Detect.js/2.2.2/detect.min.js"
+    integrity="sha512-iNuMM5cmiXDvk4VCTp6UEbDwYy/dA3CFTTYKB6/V+LD62S58TQZ+sykXzhmVT1QvqHD39ZhecsPGXjZUaIuSWQ=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
 
   <body>
     <img id="status" src="{{statusImage}}" />
@@ -64,17 +69,27 @@
   </body>
 
   <script>
-    if ("{{redirectToStore}}" == "true") {
+    if ('{{redirectToStore}}' == 'true') {
       var result = detect.parse(navigator.userAgent);
-      if (result.os.family === "iOS") {
-        window.location.href = "https://apps.apple.com/us/app/{{appStoreID}}";
-      } else if (result.os.family.includes("Android")) {
-        window.location.href =
-          "https://play.google.com/store/apps/details?id={{playStoreID}}";
+      if (result.os.family === 'iOS') {
+        window.location.href = 'https://apps.apple.com/us/app/{{appStoreID}}';
+      } else if (result.os.family.includes('Android')) {
+        if ('{{androidScheme}}' != 'false') {
+          const fallbackUrl = encodeURIComponent(
+            'https://play.google.com/store/apps/details?id={{androidBundleID}}',
+          );
+          indow.location.href = `intent:#Intent;scheme={{androidScheme}};package={{androidBundleID}};S.browser_fallback_url=${fallbackUrl};end`;
+        } else {
+          window.location.href =
+            'https://play.google.com/store/apps/details?id={{androidBundleID}}';
+        }
+      } else {
+        if ('{{redirectUrl}}' != '') {
+          window.location.href = '{{redirectUrl}}';
+        }
       }
-    }
-    else if('{{redirectUrl}}' != '') {
-        window.location.href = '{{redirectUrl}}';
+    } else if ('{{redirectUrl}}' != '') {
+      window.location.href = '{{redirectUrl}}';
     }
   </script>
 </html>

@@ -1,25 +1,30 @@
 import * as functions from 'firebase-functions';
+import * as admin from 'firebase-admin';
 import * as express from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
 import axios from 'axios';
 
-import FlowLink from './flow-link';
+import FlowLink from './types';
 import config from './config';
 
 const {
   projectID,
   extensionID,
   location,
-  iosAppID,
+  iosBundleID,
   iosTeamID,
-  androidAppID,
-  androidAppSHA,
+  androidBundleID,
+  androidSHA,
+  androidScheme,
   domainPostfix,
 } = config;
 
 // Initialize Express app
 const app = express();
+
+// Initialize Firebase Admin SDK
+admin.initializeApp();
 
 // Set up Firebase Cloud Functions
 exports.api = functions.https.onRequest(app);
@@ -28,122 +33,130 @@ exports.api = functions.https.onRequest(app);
 const hostname = `${projectID}-${domainPostfix}.web.app`;
 
 // Initializate extension
-exports.initialize = functions.tasks.taskQueue()
-  .onDispatch(async () => {
-    const { getExtensions } = await import('firebase-admin/extensions');
-    const { FirebaseService } = await import('./firebase-service');
-    const admin = await import('firebase-admin');
+exports.initialize = functions.tasks.taskQueue().onDispatch(async () => {
+  const { getExtensions } = await import('firebase-admin/extensions');
+  const { FirebaseService } = await import('./firebase-service');
 
-    try {
-      // Initialize Firebase Admin SDK
-      admin.initializeApp();
+  try {
+    // Initialize Firestore
+    const db = admin.firestore();
+    const collection = db.collection('_flowlinks_');
 
-      // Initialize Firestore
-      const db = admin.firestore();
-      const collection = db.collection('_flowlinks_');
+    // Initialize Firebase Service
+    const firebaseService = new FirebaseService();
+    await firebaseService.init();
 
-      // Initialize Firebase Service
-      const firebaseService = new FirebaseService();
-      await firebaseService.init();
+    // Create a new website
+    const siteID = await firebaseService.createNewWebsite();
 
-      // Create a new website
-      const siteID = await firebaseService.createNewWebsite();
+    // Specify website config
+    const configPayload = {
+      config: {
+        appAssociation: 'NONE',
+        rewrites: [
+          {
+            glob: '**',
+            function: `ext-${extensionID}-api`,
+            functionRegion: location,
+          },
+        ],
+      },
+    };
 
-      // Specify website config
-      const configPayload = {
-        config: {
-          appAssociation: 'NONE',
-          rewrites: [
-            {
-              'glob': '**',
-              'function': `ext-${extensionID}-api`,
-              'functionRegion': location,
-            },
-          ],
-        },
-      };
+    // Get the new version ID
+    const versionID = await firebaseService.createNewVersion(
+      siteID,
+      configPayload,
+    );
 
-      // Get the new version ID
-      const versionID = await firebaseService.createNewVersion(siteID, configPayload);
+    // Finalize version
+    await firebaseService.finalizeVersion(siteID, versionID);
 
-      // Finalize version
-      await firebaseService.finalizeVersion(siteID, versionID);
+    // Deploy to hosting
+    await firebaseService.deployVersion(siteID, versionID);
 
-      // Deploy to hosting
-      await firebaseService.deployVersion(siteID, versionID);
+    // Add a sample flow link
+    await collection.add({
+      path: '/welcome',
+      'og:title': 'Welcome to FlowLinks',
+      'og:description': 'Time to set them up!',
+      'og:image': `https://${siteID}.web.app/images/thumb.jpg`,
+      redirectToStore: false,
+      redirectUrl: '',
+    });
 
-      // Add a sample flow link
-      await collection.add({
-        'path': '/welcome',
-        'og:title': 'Welcome to FlowLinks',
-        'og:description': 'Time to set them up!',
-        'og:image': `https://${siteID}.web.app/images/thumb.jpg`,
-        'redirectToStore': false,
-        'redirectUrl': '',
-      });
+    // Cold start the instance
+    await axios.get(`https://${siteID}.web.app/welcome`);
 
-      // [Hack] Fetch the link to reduce future loading speed
-      await axios.get(`https://${siteID}.web.app/welcome`);
+    // Finalize extension initialization
+    await getExtensions()
+      .runtime()
+      .setProcessingState('PROCESSING_COMPLETE', `Initialization is complete`);
+  } catch (error) {
+    const errorMessage = error === Error ? (error as Error).message : error;
+    functions.logger.error('Initialization error:', errorMessage);
 
-      // Finalize extension initialization
-      await getExtensions().runtime().setProcessingState(
-        'PROCESSING_COMPLETE',
-        `Initialization is complete`
-      );
-    } catch (error) {
-      const errorMessage = error === Error ? (error as Error).message : error;
-      functions.logger.error('Initialization error:', errorMessage);
-
-      await getExtensions().runtime().setProcessingState(
+    await getExtensions()
+      .runtime()
+      .setProcessingState(
         'PROCESSING_FAILED',
-        `Initialization failed. ${errorMessage}`
+        `Initialization failed. ${errorMessage}`,
       );
-    }
-  });
+  }
+});
 
 // Error-handling middleware
-app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  functions.logger.error('Error:', err);
-  res.status(500).send('Internal Server Error');
-});
+app.use(
+  (
+    err: Error,
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction,
+  ) => {
+    functions.logger.error('Error:', err);
+    res.status(500).send('Internal Server Error');
+  },
+);
 
 // iOS Association
 app.get('/.well-known/apple-app-site-association', async (req, res) => {
-  const applicationID = `${iosTeamID}.${iosAppID}`;
+  const applicationID = `${iosTeamID}.${iosBundleID}`;
 
   res.writeHead(200, { 'Content-Type': 'application/json' });
-  res.write(JSON.stringify({
-    'applinks': {
-      'apps': [],
-      'details': [{
-        'appID': applicationID,
-        'paths': ['*'],
-      }],
-    },
-    'webcredentials': {
-      'apps': [
-        applicationID,
-      ],
-    },
-  }));
+  res.write(
+    JSON.stringify({
+      applinks: {
+        apps: [],
+        details: [
+          {
+            appID: applicationID,
+            paths: ['*'],
+          },
+        ],
+      },
+      webcredentials: {
+        apps: [applicationID],
+      },
+    }),
+  );
   res.end();
 });
 
 // Android Association
 app.get('/.well-known/assetlinks.json', (req, res) => {
   res.writeHead(200, { 'Content-Type': 'application/json' });
-  res.write(JSON.stringify(
-    [{
-      'relation': [
-        'delegate_permission/common.handle_all_urls',
-      ],
-      'target': {
-        'namespace': 'android_app',
-        'package_name': androidAppID,
-        'sha256_cert_fingerprints': [androidAppSHA],
+  res.write(
+    JSON.stringify([
+      {
+        relation: ['delegate_permission/common.handle_all_urls'],
+        target: {
+          namespace: 'android_app',
+          package_name: androidBundleID,
+          sha256_cert_fingerprints: [androidSHA],
+        },
       },
-    }]
-  ));
+    ]),
+  );
   res.end();
 });
 
@@ -153,15 +166,9 @@ app.use('/images', express.static(path.join(__dirname, './assets/images')));
 // Handle all other routes
 app.get('*', async (req, res, next) => {
   try {
-    const admin = await import('firebase-admin');
-
-    // Initialize Firebase Admin SDK
-    try {
-      admin.initializeApp();
-    } catch (_) { }
-
     // Get Firestore instance
     const db = admin.firestore();
+
     const collection = db.collection('_flowlinks_');
 
     // Parse link data
@@ -182,7 +189,7 @@ app.get('*', async (req, res, next) => {
     const flowLink = linkSnapshot.docs[0].data() as FlowLink;
     const source = await getFlowLinkResponse(flowLink);
 
-    res.setHeader('Cache-Control', 'public, max-age=86400');
+    res.setHeader('Cache-Control', 'no-cache');
     return res.status(200).send(source);
   } catch (error) {
     functions.logger.error('Error processing FlowLink: ', error);
@@ -198,7 +205,8 @@ function getNotFoundResponse(): string {
   const backgroundImage = `https://${hostname}/images/background.png`;
 
   const templatePath = path.join(__dirname, './assets/html/404.html');
-  const source = fs.readFileSync(templatePath, { encoding: 'utf-8' })
+  const source = fs
+    .readFileSync(templatePath, { encoding: 'utf-8' })
     .replaceAll('{{thumbnail}}', thumbnail)
     .replaceAll('{{notFoundImage}}', notFoundImage)
     .replaceAll('{{backgroundImage}}', backgroundImage)
@@ -228,15 +236,17 @@ async function getFlowLinkResponse(flowLink: FlowLink): Promise<string> {
   // Get iOS AppStore appID
   let appStoreID = '';
   if (redirectToStore) {
-    appStoreID = (await getAppStoreID(iosAppID)) || '';
+    appStoreID = (await getAppStoreID(iosBundleID)) || '';
   }
 
   const templatePath = path.join(__dirname, './assets/html/index.html');
-  const source = fs.readFileSync(templatePath, { encoding: 'utf-8' })
+  const source = fs
+    .readFileSync(templatePath, { encoding: 'utf-8' })
     .replaceAll('{{title}}', title)
     .replaceAll('{{description}}', description)
     .replaceAll('{{appStoreID}}', appStoreID)
-    .replaceAll('{{playStoreID}}', androidAppID)
+    .replaceAll('{{androidBundleID}}', androidBundleID)
+    .replaceAll('{{androidScheme}}', (androidScheme ?? false).toString())
     .replaceAll('{{redirectToStore}}', redirectToStore.toString())
     .replaceAll('{{redirectUrl}}', redirectUrl)
     .replaceAll('{{thumbnail}}', image)
@@ -250,7 +260,9 @@ async function getFlowLinkResponse(flowLink: FlowLink): Promise<string> {
 // Get AppStore numeric ID
 async function getAppStoreID(bundleId: string): Promise<string | null> {
   try {
-    const response = await axios.get(`http://itunes.apple.com/lookup?bundleId=${bundleId}`);
+    const response = await axios.get(
+      `http://itunes.apple.com/lookup?bundleId=${bundleId}`,
+    );
 
     if (response.data && response.data.results.length > 0) {
       const appInfo = response.data.results[0];
