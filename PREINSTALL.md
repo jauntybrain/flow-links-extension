@@ -6,7 +6,7 @@ Upon installation, a new **Firebase Hosting** website & domain are automatically
 
 Newly created links are stored in a **Cloud Firestore** collection.
 
-A friendly-UI **Dashboard** for Flow Links creation and management is currently under development.
+You can create and manage your links with the [FlowLinks Dashboard](https://edit.flowlinks.app/).
 
 Read more about what inspired this extension in [this blog](https://medium.com/@jauntybrain/dynamic-links-are-dead-what-to-do-c73ad0669540).
 
