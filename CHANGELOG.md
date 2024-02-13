@@ -1,3 +1,6 @@
+## Version 0.1.5
+- Fix: typo
+
 ## Version 0.1.4
 
 - Fix: remove server response caching, which caused links to not be updated in time.

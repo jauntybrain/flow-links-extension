@@ -78,7 +78,7 @@
           const fallbackUrl = encodeURIComponent(
             'https://play.google.com/store/apps/details?id={{androidBundleID}}',
           );
-          indow.location.href = `intent:#Intent;scheme={{androidScheme}};package={{androidBundleID}};S.browser_fallback_url=${fallbackUrl};end`;
+          window.location.href = `intent:#Intent;scheme={{androidScheme}};package={{androidBundleID}};S.browser_fallback_url=${fallbackUrl};end`;
         } else {
           window.location.href =
             'https://play.google.com/store/apps/details?id={{androidBundleID}}';
