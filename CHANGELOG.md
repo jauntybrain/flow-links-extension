@@ -1,5 +1,5 @@
 ## Version 0.1.5
-- Fix: typo
+- Fix: minor typo correction.
 
 ## Version 0.1.4
 
