@@ -1,5 +1,5 @@
 name: firebase-flow-links
-version: 0.1.5
+version: 0.1.6
 specVersion: v1beta
 
 displayName: FlowLinks - Dynamic Links Alternative
@@ -42,7 +42,7 @@ resources:
     properties:
       location: ${LOCATION}
       taskQueueTrigger: {}
-      runtime: 'nodejs18'
+      runtime: 'nodejs20'
 
   - name: api
     type: firebaseextensions.v1beta.function
@@ -51,7 +51,7 @@ resources:
     properties:
       location: ${LOCATION}
       httpsTrigger: {}
-      runtime: 'nodejs18'
+      runtime: 'nodejs20'
       minInstances: ${MIN_INSTANCES}
 
 lifecycleEvents:

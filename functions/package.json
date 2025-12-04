@@ -20,7 +20,7 @@
     "singleQuote": true
   },
   "engines": {
-    "node": "18"
+    "node": "20"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.12.0",

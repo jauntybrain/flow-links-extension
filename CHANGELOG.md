@@ -1,3 +1,6 @@
+## Version 0.1.6
+- Update to nodejs20
+
 ## Version 0.1.5
 - Fix: minor typo correction.
 
