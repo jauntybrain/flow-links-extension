@@ -72,6 +72,8 @@
     if ('{{redirectToStore}}' == 'true') {
       var result = detect.parse(navigator.userAgent);
       if (result.os.family === 'iOS') {
+        // Copying to a clipboard for use later as a deferred deep link in iOS.
+        navigator.clipboard.writeText(window.location.href);
         window.location.href = 'https://apps.apple.com/us/app/{{appStoreID}}';
       } else if (result.os.family.includes('Android')) {
         if ('{{androidScheme}}' != 'false') {
@@ -80,6 +82,8 @@
           );
           window.location.href = `intent:#Intent;scheme={{androidScheme}};package={{androidBundleID}};S.browser_fallback_url=${fallbackUrl};end`;
         } else {
+          // We can also use a clipboard in Android instead of Google Play Install Referrer, but it's redundant.
+          // navigator.clipboard.writeText(window.location.href);
           window.location.href =
             'https://play.google.com/store/apps/details?id={{androidBundleID}}';
         }
